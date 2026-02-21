@@ -1,0 +1,36 @@
+{
+  "name": "@vasic-digital/catalogizer-api-client",
+  "version": "0.1.0",
+  "description": "Type-safe TypeScript client for the Catalogizer API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@vasic-digital/media-types": "file:../Media-Types-TS",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "catalogizer",
+    "api",
+    "client",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasic-digital/Catalogizer-API-Client-TS.git"
+  }
+}
