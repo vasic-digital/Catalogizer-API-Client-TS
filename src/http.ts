@@ -8,13 +8,19 @@ import {
   ValidationError,
 } from './types'
 
-/** HttpClient wraps axios with auth token injection, retry logic, and error mapping. */
+/**
+ * HttpClient wraps axios with bearer-token injection, automatic 401 token refresh,
+ * retry with exponential backoff, and HTTP status-to-error-class mapping.
+ */
 export class HttpClient {
   private readonly client: AxiosInstance
   private authToken?: string
   private readonly config: ClientConfig
 
+  /** Callback invoked when a 401 is received to attempt token refresh. */
   public onTokenRefresh?: () => Promise<string | null>
+
+  /** Callback invoked when token refresh fails and the session is unrecoverable. */
   public onAuthenticationError?: () => void
 
   constructor(config: ClientConfig) {
@@ -30,6 +36,7 @@ export class HttpClient {
     this.setupInterceptors()
   }
 
+  /** Installs request and response interceptors for auth injection and 401 auto-refresh. */
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
@@ -70,6 +77,7 @@ export class HttpClient {
     )
   }
 
+  /** Maps an axios error to the appropriate CatalogizerError subclass. */
   private mapError(error: unknown): CatalogizerError {
     if (!axios.isAxiosError(error) || !error.response) {
       return new NetworkError('Network connection failed')
@@ -89,6 +97,7 @@ export class HttpClient {
     }
   }
 
+  /** Unwraps the ApiResponse envelope, throwing on failure. */
   private extractData<T>(response: AxiosResponse<ApiResponse<T>>): T {
     const body = response.data
     if (body.success === false) {
@@ -97,30 +106,44 @@ export class HttpClient {
     return body.data !== undefined ? body.data : (body as unknown as T)
   }
 
+  /** Stores the bearer token to be injected into subsequent requests. */
   public setAuthToken(token: string): void { this.authToken = token }
+
+  /** Clears the stored bearer token. */
   public clearAuthToken(): void { this.authToken = undefined }
+
+  /** Returns the currently stored bearer token, if any. */
   public getAuthToken(): string | undefined { return this.authToken }
 
+  /** Sends a GET request and returns the unwrapped response data. */
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     return this.extractData(await this.client.get<ApiResponse<T>>(url, config))
   }
 
+  /** Sends a POST request and returns the unwrapped response data. */
   public async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     return this.extractData(await this.client.post<ApiResponse<T>>(url, data, config))
   }
 
+  /** Sends a PUT request and returns the unwrapped response data. */
   public async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     return this.extractData(await this.client.put<ApiResponse<T>>(url, data, config))
   }
 
+  /** Sends a PATCH request and returns the unwrapped response data. */
   public async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
     return this.extractData(await this.client.patch<ApiResponse<T>>(url, data, config))
   }
 
+  /** Sends a DELETE request and returns the unwrapped response data. */
   public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     return this.extractData(await this.client.delete<ApiResponse<T>>(url, config))
   }
 
+  /**
+   * Retries an async operation with exponential backoff.
+   * Authentication and validation errors are never retried.
+   */
   public async withRetry<T>(
     operation: () => Promise<T>,
     maxAttempts = this.config.retryAttempts ?? 3,
