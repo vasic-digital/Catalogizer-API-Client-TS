@@ -11,6 +11,7 @@ import { SmbService } from './services/SmbService'
 import { SyncService } from './services/SyncService'
 import { DownloadService } from './services/DownloadService'
 import { PlaylistService } from './services/PlaylistService'
+import { PlaybackService } from './services/PlaybackService'
 import { AnalyticsService } from './services/AnalyticsService'
 import { ReportService } from './services/ReportService'
 import type { ClientConfig } from './types'
@@ -26,6 +27,7 @@ export { SmbService } from './services/SmbService'
 export { SyncService } from './services/SyncService'
 export { DownloadService } from './services/DownloadService'
 export { PlaylistService } from './services/PlaylistService'
+export { PlaybackService } from './services/PlaybackService'
 export { AnalyticsService } from './services/AnalyticsService'
 export { ReportService } from './services/ReportService'
 export { HttpClient } from './http'
@@ -51,6 +53,7 @@ export type { SmbDiscoverRequest, SmbTestRequest, SmbBrowseParams } from './serv
 export type { SyncEndpoint, CreateSyncEndpointRequest, UpdateSyncEndpointRequest, SyncSession } from './services/SyncService'
 export type { ArchiveRequest } from './services/DownloadService'
 export type { Playlist, PlaylistItem, CreatePlaylistRequest, UpdatePlaylistRequest, AddPlaylistItemRequest } from './services/PlaylistService'
+export type { PlaybackUnit, PlaybackSession, MediaProgress, StartPlaybackRequest } from './services/PlaybackService'
 export type { AccessEvent, AnalyticsEvent, UserAnalytics } from './services/AnalyticsService'
 export type { ReportParams } from './services/ReportService'
 
@@ -70,6 +73,7 @@ export class CatalogizerClient extends EventEmitter {
   public readonly sync: SyncService
   public readonly downloads: DownloadService
   public readonly playlists: PlaylistService
+  public readonly playback: PlaybackService
   public readonly analytics: AnalyticsService
   public readonly reports: ReportService
 
@@ -89,6 +93,7 @@ export class CatalogizerClient extends EventEmitter {
     this.sync = new SyncService(this.http)
     this.downloads = new DownloadService(this.http)
     this.playlists = new PlaylistService(this.http)
+    this.playback = new PlaybackService(this.http)
     this.analytics = new AnalyticsService(this.http)
     this.reports = new ReportService(this.http)
 
