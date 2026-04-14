@@ -1,0 +1,8 @@
+Commit: 6fdbfe1981f0a0b624db758f9b5275eeed2500f4
+Branch: main
+6fdbfe1 feat(api-client): PlaybackService for session tracking + history
+4a34e00 Add GitHub Sponsors button for vasic-digital
+d54fd9e security: Add mandatory NO SUDO/ROOT execution constraint
+1a851e5 docs: add ARCHITECTURE.md, doc.go, tests, .env gitignore for v2.1.0
+3fc5211 chore: add Upstreams directory for multi-remote push
+
