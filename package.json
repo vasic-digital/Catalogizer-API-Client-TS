@@ -14,7 +14,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vasic-digital/media-types": "file:../Media-Types-TS",
+    "@vasic-digital/media-types": "file:../media_types_ts",
     "axios": "^1.6.0"
   },
   "devDependencies": {
